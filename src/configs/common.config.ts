@@ -9,4 +9,8 @@ export default registerAs('common', () => ({
   nodeEnv: process.env.NODE_ENV,
   isDevelopment: process.env.NODE_ENV === NODE_ENVIRONMENTS[0],
   swaggerApiRoot: process.env.SWAGGER_API_ROOT,
+  auth: {
+    authName: process.env.AUTH_NAME,
+    serviceKey: process.env.APP_SERVICE_KEY,
+  },
 }));
