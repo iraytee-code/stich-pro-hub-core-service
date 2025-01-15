@@ -4,6 +4,7 @@ import { NestExpressApplication } from '@nestjs/platform-express';
 import { Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+import { ResponseInterceptor } from '@shared/interceptors/response.interceptors';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
@@ -44,6 +45,7 @@ async function bootstrap() {
   };
 
   app.enableCors(options);
+  app.useGlobalInterceptors(new ResponseInterceptor());
 
   const swaggerOptions = new DocumentBuilder()
     .setTitle(`${PRODUCT_NAME} API Documentation`)
