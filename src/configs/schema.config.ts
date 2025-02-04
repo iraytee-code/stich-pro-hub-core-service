@@ -50,5 +50,8 @@ export default {
 
     // swagger
     SWAGGER_API_ROOT: Joi.string().required(),
+
+    // Auth
+    APP_SERVICE_KEY: Joi.string().required(),
   }),
 };
