@@ -4,12 +4,12 @@ import { PermissionService } from '@modules/core/services/permission.service';
 import { Permission } from '@modules/core/entities/permission.entity';
 
 @Injectable()
-export class FetchPermissionUsecase extends Usecase<{ permission: Permission }> {
+export class FetchPermissionUsecase extends Usecase<{ permissions: Permission[] }> {
   constructor(private readonly permissionService: PermissionService) {
     super();
   }
-  async execute(): Promise<{ permission: Permission }> {
+  async execute(): Promise<{ permissions: Permission[] }> {
     const permissions = await this.permissionService.fetchAllpermissions();
-    return { permission: permissions[0] };
+    return { permissions };
   }
 }

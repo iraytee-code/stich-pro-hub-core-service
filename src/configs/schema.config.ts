@@ -53,5 +53,12 @@ export default {
 
     // Auth
     APP_SERVICE_KEY: Joi.string().required(),
+
+    // sendgrid
+    SENDGRID_API_KEY: Joi.string().required(),
+    SENDGRID_SENDER_NAME: Joi.string().required(),
+    SENDGRID_SENDER_EMAIL: Joi.string().required(),
+    SENDGRID_TEMPLATES_EMAIL_VERIFICATION: Joi.string().required(),
+    SENDGRID_TEMPLATES_USER_WELCOME: Joi.string().required(),
   }),
 };

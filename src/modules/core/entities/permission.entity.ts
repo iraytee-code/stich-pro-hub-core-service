@@ -1,5 +1,6 @@
 import { BaseEntity } from '@shared/repositories/base.entity';
-import { Column, Entity } from 'typeorm';
+import { Column, Entity, ManyToMany } from 'typeorm';
+import { Role } from './role.entity';
 
 export enum PermissionScope {
   SYSTEM = 'SYSTEM',
@@ -18,10 +19,14 @@ export enum PermissionStatus {
 
 @Entity('permissions')
 export class Permission extends BaseEntity {
-  @Column({ type: 'varchar', unique: true })
+  @Column({
+    type: 'varchar',
+    unique: true,
+    nullable: false,
+  })
   name: string;
 
-  @Column({ type: 'text', nullable: true })
+  @Column({ type: 'text', nullable: false })
   description: string;
 
   @Column({
@@ -43,4 +48,7 @@ export class Permission extends BaseEntity {
     default: PermissionStatus.ENABLED,
   })
   status: PermissionStatus;
+
+  @ManyToMany(() => Role, (role) => role.permissions)
+  roles: Role[];
 }

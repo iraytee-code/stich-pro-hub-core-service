@@ -11,6 +11,7 @@ import { UtilsModule } from '@modules/utils/util.module';
 import { APP_GUARD } from '@nestjs/core';
 
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
+import { OrganizationModule } from '@modules/organization/organization.module';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
       useFactory: async (configService: ConfigService) => configService.get('typeorm'),
     }),
     UtilsModule,
+    OrganizationModule,
     ThrottlerModule.forRoot([{ ttl: 30000, limit: 10 }]),
   ],
   controllers: [],
