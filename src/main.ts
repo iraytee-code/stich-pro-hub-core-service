@@ -5,7 +5,7 @@ import { Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { ResponseInterceptor } from '@shared/interceptors/response.interceptors';
-import { AuthorizationGuard } from '@shared/guards/authorization.guards';
+// import { AuthorizationGuard } from '@shared/guards/authorization.guards';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
@@ -47,7 +47,7 @@ async function bootstrap() {
 
   app.enableCors(options);
   app.useGlobalInterceptors(new ResponseInterceptor());
-  app.useGlobalGuards(new AuthorizationGuard(configService));
+  // app.useGlobalGuards(new AuthorizationGuard(configService));
 
   const swaggerOptions = new DocumentBuilder()
     .setTitle(`${PRODUCT_NAME} API Documentation`)
