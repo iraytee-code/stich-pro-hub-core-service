@@ -60,5 +60,7 @@ export default {
     SENDGRID_SENDER_EMAIL: Joi.string().required(),
     SENDGRID_TEMPLATES_EMAIL_VERIFICATION: Joi.string().required(),
     SENDGRID_TEMPLATES_USER_WELCOME: Joi.string().required(),
+    SENDGRID_TEMPLATES_RESET_PASSWORD_OTP: Joi.string().required(),
+    SENDGRID_TEMPLATES_NEW_PASSWORD_DEFAULT: Joi.string().required(),
   }),
 };

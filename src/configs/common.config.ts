@@ -18,6 +18,8 @@ export default registerAs('common', () => ({
     templates: {
       emailVerification: process.env.SENDGRID_TEMPLATES_EMAIL_VERIFICATION,
       welcome: process.env.SENDGRID_TEMPLATES_USER_WELCOME,
+      passwordResetOtp: process.env.SENDGRID_TEMPLATES_RESET_PASSWORD_OTP,
+      passwordReset: process.env.SENDGRID_TEMPLATES_NEW_PASSWORD_DEFAULT,
     },
   },
   auth: {

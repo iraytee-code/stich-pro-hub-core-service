@@ -38,6 +38,7 @@ export class UserService {
       roleId: data.roleId,
       type: UserType.ORGANIZATION_ADMIN,
       status: UserStatus.PENDING,
+      requirePasswordChange: true,
     });
   }
 
@@ -69,5 +70,16 @@ export class UserService {
       throw new NotFoundException('Organization owner not found');
     }
     return user;
+  }
+
+  // password services
+
+  async updatePassword(userId: string, newPassword: string): Promise<User> {
+    const hashedPassword = await this.hashingUtil.hash(newPassword);
+
+    return await this.userRepository.updateUser(userId, {
+      password: hashedPassword,
+      requirePasswordChange: false,
+    });
   }
 }

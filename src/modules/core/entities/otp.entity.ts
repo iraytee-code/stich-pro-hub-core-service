@@ -3,7 +3,8 @@ import { Organization } from './organization.entity';
 import { BaseEntity } from '@shared/repositories/base.entity';
 
 export enum OtpActions {
-  VERIFY_EMAIL = 'verify_email',
+  VERIFY_EMAIL = 'VERIFY_EMAIL',
+  PASSWORD_RESET = 'PASSWORD_RESET',
 }
 
 @Entity('otp_codes')

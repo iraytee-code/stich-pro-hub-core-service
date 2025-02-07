@@ -12,6 +12,7 @@ import { APP_GUARD } from '@nestjs/core';
 
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { OrganizationModule } from '@modules/organization/organization.module';
+import { PasswordModule } from '@modules/password/password.module';
 
 @Module({
   imports: [
@@ -27,6 +28,8 @@ import { OrganizationModule } from '@modules/organization/organization.module';
     }),
     UtilsModule,
     OrganizationModule,
+    PasswordModule,
+
     ThrottlerModule.forRoot([{ ttl: 30000, limit: 10 }]),
   ],
   controllers: [],

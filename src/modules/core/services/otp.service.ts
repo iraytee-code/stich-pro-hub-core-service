@@ -2,7 +2,6 @@ import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { FindOneOptions } from 'typeorm';
 import { addMinutes, differenceInMinutes } from 'date-fns';
-
 import { OtpCodeRepository } from '@adapters/repositories/otp.repository';
 import { EmailAdapter } from '@adapters/notifications/email/email.adapter';
 import { RandomnessUtil } from '@shared/utils/encryption/randomness.util';
@@ -153,11 +152,13 @@ export class OtpService {
         dynamicTemplateData: {
           name,
           password,
+          isTemporary: true, // Add this to the template
+          passwordChangeRequired: true, // Add this to the template
         },
       });
     } catch (error) {
-      this.logger.error(`Failed to send default password email to ${to}`, error);
-      throw new BadRequestException('Failed to send default password email');
+      this.logger.error(`Failed to send temporary password email to ${to}`, error);
+      throw new BadRequestException('Failed to send temporary password email');
     }
   }
 
@@ -170,6 +171,86 @@ export class OtpService {
       to: email,
       name,
       password,
+    });
+  }
+
+  async createPasswordResetOtpcode(data: {
+    medium: string;
+    name: string;
+    organizationId: string;
+  }): Promise<void> {
+    const otpCode = this.generateOtpCode();
+
+    try {
+      await this.otpRepository.createOtpCode({
+        ...data,
+        pinId: otpCode,
+        action: OtpActions.PASSWORD_RESET,
+        expiresAt: addMinutes(new Date(), this.emailVerificationValidityMinutes).toISOString(),
+      });
+      await this.emailAdapter.send({
+        to: data.medium,
+        from: {
+          name: this.senderName,
+          email: this.senderEmail,
+        },
+        templateId: this.configService.get<string>('common.sendgrid.templates.passwordResetOtp'),
+        dynamicTemplateData: {
+          name: data.name,
+          otp: otpCode,
+          expiryTime: this.emailVerificationValidityMinutes,
+        },
+      });
+    } catch (error) {
+      this.logger.error('Failed to create password reset OTP', error);
+      throw new BadRequestException('Failed to create password reset OTP');
+    }
+  }
+
+  async sendNewPasswordEmail(data: { to: string; name: string; password: string }): Promise<void> {
+    try {
+      await this.emailAdapter.send({
+        to: data.to,
+        from: {
+          name: this.senderName,
+          email: this.senderEmail,
+        },
+        templateId: this.configService.get<string>('common.sendgrid.templates.passwordReset'),
+        dynamicTemplateData: {
+          name: data.name,
+          password: data.password,
+          isTemporary: true,
+          passwordChangeRequired: true,
+        },
+      });
+    } catch (error) {
+      this.logger.error(`Failed to send new password email to ${data.to}`, error);
+      throw new BadRequestException('Failed to send new password email');
+    }
+  }
+
+  async verifyPasswordResetOtpCode(data: { medium: string; pinId: string }): Promise<void> {
+    const otpDetails = await this.otpRepository.getOtpCodeByMedium(
+      data.medium,
+      OtpActions.PASSWORD_RESET,
+    );
+
+    if (!otpDetails) {
+      throw new BadRequestException('Invalid Request');
+    }
+
+    if (otpDetails.pinId !== data.pinId) {
+      throw new BadRequestException('Invalid OTP');
+    }
+
+    const minutesDifference = differenceInMinutes(new Date(), otpDetails.expiresAt);
+    if (minutesDifference > this.emailVerificationValidityMinutes) {
+      throw new BadRequestException('OTP Expired');
+    }
+
+    await this.otpRepository.updateOtpCode(otpDetails.id as FindOneOptions<OtpCode>, {
+      isVerified: true,
+      isActive: false,
     });
   }
 }

@@ -50,6 +50,13 @@ export class User extends BaseEntity {
   })
   status: UserStatus;
 
+  @Column({
+    type: 'boolean',
+    default: true,
+    name: 'require_password_change',
+  })
+  requirePasswordChange: boolean;
+
   @ManyToOne(() => Role)
   @JoinColumn({ name: 'role_id' })
   role: Role;
